@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PharmaQuest: Walk the Pharma Building</title>
+<style>
+:root{--bg:color-mix(in srgb,#2BB3A7 9%,#F8F8F5);--ink:#0F5D5A;--panel:#F8F8F5;--line:color-mix(in srgb,#2BB3A7 35%,#F8F8F5);--acc:#0F5D5A;--accInk:#F8F8F5;--amber:#F6B44D;--bad:#B8760F;--good:#2BB3A7;--mute:color-mix(in srgb,#0F5D5A 75%,#F8F8F5);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:color-mix(in srgb,#0F5D5A 35%,#000);--ink:#F8F8F5;--panel:color-mix(in srgb,#0F5D5A 70%,#000);--line:color-mix(in srgb,#2BB3A7 40%,#0F5D5A);--acc:#2BB3A7;--accInk:color-mix(in srgb,#0F5D5A 50%,#000);--amber:#F6B44D;--bad:#F6B44D;--good:#2BB3A7;--mute:color-mix(in srgb,#F8F8F5 70%,#0F5D5A)}}
+:root[data-theme="dark"]{--bg:color-mix(in srgb,#0F5D5A 35%,#000);--ink:#F8F8F5;--panel:color-mix(in srgb,#0F5D5A 70%,#000);--line:color-mix(in srgb,#2BB3A7 40%,#0F5D5A);--acc:#2BB3A7;--accInk:color-mix(in srgb,#0F5D5A 50%,#000);--amber:#F6B44D;--bad:#F6B44D;--good:#2BB3A7;--mute:color-mix(in srgb,#F8F8F5 70%,#0F5D5A)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.hud{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.bar{flex:1;height:12px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--amber);transition:width .5s}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px}
+h1{font:700 34px/1.1 Georgia,serif;margin:0 0 10px}h2{font:700 22px/1.25 Georgia,serif;margin:0 0 8px}p{margin:0 0 12px}ul{padding-left:20px;margin:0 0 12px}.mute{color:var(--mute)}
+button{font:inherit;cursor:pointer;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);padding:12px 16px;text-align:left}
+button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.go{background:var(--acc);border-color:var(--acc);color:var(--accInk);font-weight:700;text-align:center;width:100%}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--amber);color:#0a3b39;font-weight:700;font-size:14px}
+.fb{border-left:5px solid var(--acc);padding:8px 12px;margin:12px 0;background:color-mix(in srgb,var(--acc) 10%,var(--panel));border-radius:0 10px 10px 0}
+.bld{position:relative;border:3px solid var(--ink);border-radius:14px 14px 0 0;overflow:hidden;background:var(--panel);margin-bottom:14px}
+.roof{height:34px;background:var(--acc);color:var(--accInk);text-align:center;font-weight:700;padding-top:3px}
+.fl{display:grid;grid-template-columns:1fr 44px 1fr;height:95px;border-top:3px solid var(--ink)}
+.rm{position:relative;border:0;border-radius:0;margin:0;padding:8px;display:flex;flex-direction:column;justify-content:flex-end;font-size:13px;line-height:1.2;overflow:hidden}
+.rm .sc{position:absolute;top:6px;right:6px;font-size:32px}.rm .ck{position:absolute;top:4px;left:6px;font-size:18px}
+.rm.dn{box-shadow:inset 0 0 0 3px var(--good)}
+.sh{background:repeating-linear-gradient(var(--line) 0 6px,transparent 6px 12px);display:flex;align-items:center;justify-content:center;font-weight:700}
+.av{position:absolute;font-size:32px;transform:translate(-50%,-50%);transition:left .75s linear,top .75s linear;z-index:2;pointer-events:none}
+.pic{width:46px;height:46px;border-radius:50%;display:block}.ban .pic{display:inline-block;width:84px;height:84px;vertical-align:middle}.av.walk{animation:bob .3s infinite}@keyframes bob{50%{margin-top:-6px}}
+.ban{border-radius:14px;padding:14px;text-align:center;font-size:46px;margin-bottom:12px}
+.arena{position:relative;height:300px;border-radius:14px;overflow:hidden;touch-action:none;user-select:none;margin:12px 0;border:3px solid var(--ink)}
+.arena.no{animation:shk .3s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.arena.no,.pic{width:46px;height:46px;border-radius:50%;display:block}.ban .pic{display:inline-block;width:84px;height:84px;vertical-align:middle}.av.walk{animation:none}.av{transition:none}.bar i{transition:none}}
+.ov{position:fixed;inset:0;background:rgba(10,59,57,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}.ov .card{max-width:420px;margin:0}.xb{padding:2px 10px;margin-left:8px;text-align:center}.bkr{position:relative;width:110px;height:170px;margin:0 auto;border:3px solid #F8F8F5;border-top:none;border-radius:0 0 22px 22px;overflow:hidden;background:rgba(248,248,245,.08)}.band{position:absolute;left:0;right:0;background:rgba(246,180,77,.45);border-top:2px dashed #F6B44D;border-bottom:2px dashed #F6B44D}.liq{position:absolute;left:0;right:0;bottom:0;background:#2BB3A7;height:0}.cht{position:relative;display:flex;align-items:flex-end;gap:6px;height:190px;padding:0 10px}.col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;background:none;border:0;padding:0;color:#F8F8F5;font-size:13px;text-align:center}.bf{width:100%;background:#2BB3A7;border-radius:6px 6px 0 0}.exp{position:absolute;left:10px;right:10px;bottom:65px;border-top:2px dashed #F6B44D;pointer-events:none}.exp span{position:absolute;right:0;top:-18px;font-size:12px;color:#F6B44D}.tbar{height:8px;margin:10px 10px 0;background:rgba(248,248,245,.2);border-radius:4px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:#F6B44D}.pc{position:absolute;left:11%;right:11%;top:52px;height:190px;background:#F8F8F5;color:#0F5D5A;border-radius:18px;padding:16px;text-align:center;font-size:17px;touch-action:none;cursor:grab;display:flex;flex-direction:column;justify-content:center;gap:8px;box-shadow:0 6px 0 rgba(0,0,0,.25)}.pc .em{font-size:52px;line-height:1.1}.hint{position:absolute;bottom:10px;font-weight:700;font-size:15px;opacity:0;color:#F8F8F5;pointer-events:none}.row2{display:flex;gap:10px;margin-top:10px}.row2 button{flex:1;text-align:center}.deco{position:absolute;right:8px;top:6px;font-size:34px;opacity:.6;pointer-events:none}
+.belt{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.08) 22px 24px);pointer-events:none}
+.item{position:absolute;left:0;top:0;padding:6px 10px;border-radius:12px;background:#F8F8F5;color:#0F5D5A;border:2px solid #0F5D5A;font-size:14px;white-space:nowrap;text-align:center}
+button.item{cursor:pointer}
+#bk{position:absolute;bottom:6px;width:56px;text-align:center;font-size:42px;line-height:1}
+.thermo{position:relative;height:200px;width:70px;margin:0 auto;border:3px solid #F8F8F5;border-radius:35px;overflow:hidden;background:#0a3b39}
+.zone{position:absolute;left:0;right:0;bottom:35%;height:30%;background:rgba(246,180,77,.35)}
+.mer{position:absolute;bottom:0;left:18px;right:18px;background:#2BB3A7;transition:height .2s}
+.big{font:700 38px Georgia,serif;text-align:center;color:#F8F8F5}
+</style></head>
+<body><div class="wrap"><div class="hud"><b>PharmaQuest</b><div class="bar"><i id="bar"></i></div><b id="xp">0 XP</b></div><div id="app"></div></div>
+<script>
+var L=[
+{n:"Regulatory Affairs",s:"Regulatory",ic:"📑",r:0,x:0,c:"#2BB3A7",t:"catch",bg:"#0F5D5A",de:"🏛️",bk:"🗂️",goal:10,v:2.6,sp:30,
+ job:["Prepare registration files for EDA, FDA, EMA","Keep licenses and labeling up to date"],
+ p:"Slide the dossier folder (drag on the screen) to catch the documents the file needs. Dodge the rest.",
+ it:[["Clinical data",1],["Stability data",1],["Labeling",1],["GMP information",1],["Sales bonus plan",0],["Social media posts",0],["Competitor formula",0]],
+ e:"The dossier proves the medicine is safe, effective, and well made."},
+{n:"Medical & Scientific Affairs",s:"Medical Affairs",ic:"🎓",r:0,x:1,c:"#F6B44D",t:"tap",dir:"y",bg:"color-mix(in srgb,#0F5D5A 65%,#2BB3A7)",de:"📣",goal:8,v:2.4,sp:30,
+ job:["Give doctors scientific information","Train sales teams, support ethical promotion"],
+ p:"Promo claims are falling. Tap the misleading ones before they reach the doctor.",
+ it:[["Cures everyone in 24 h",1],["Safer than all drugs",1],["No side effects!",1],["Cites a published study",0],["Approved dose shown",0],["Lists contraindications",0]],
+ e:"Promotion must be accurate, balanced, and backed by evidence."},
+{n:"Research & Development",s:"R&D",ic:"🧪",r:1,x:0,c:"#0F5D5A",t:"pour",bg:"#0F5D5A",de:"🔬",
+ job:["Formulate new drugs, choose excipients, design dosage forms","Run stability studies"],
+ p:"Weigh each ingredient. Hold the button to pour, and release when the level is inside the yellow band. Do not overflow!",
+ it:[["Active ingredient",1],["Binder",1],["Filler",1],["Disintegrant",1],["Lubricant",1],["Unapproved dye",0],["Impurity",0],["Expired excipient",0]],
+ e:"R&D balances the active with excipients so the tablet holds together, breaks up in the body, and stays stable."},
+{n:"Pharmacovigilance",s:"Pharmaco-vigilance",ic:"🩺",r:1,x:1,c:"#2BB3A7",t:"triage",bg:"color-mix(in srgb,#0F5D5A 65%,#2BB3A7)",de:"📡",
+ job:["Collect adverse reaction reports","Monitor the benefit-risk profile"],
+ p:"Triage desk: read each patient report. Swipe the card right if it is SERIOUS, left if it is a mild side effect.",
+ it:[["Hospitalized: allergic shock",1],["Life-threatening liver failure",1],["Lasting disability",1],["Mild headache",0],["Mild nausea",0],["Dry mouth",0]],
+ e:"Serious reports are escalated quickly. Patterns across reports can reveal new risks."},
+{n:"Quality Assurance",s:"QA",ic:"📋",r:2,x:0,c:"#F6B44D",t:"tap",dir:"y",bg:"#0F5D5A",de:"🗃️",goal:8,v:2.4,sp:30,
+ job:["Maintain the quality system and GMP compliance","Review documents, deviations, and change control"],
+ p:"Batch records are falling. Tap the ones with a deviation.",
+ it:[["Signature missing",1],["Unapproved change",1],["Calibration expired",1],["Signed and dated",0],["Change control approved",0],["Complete, in ink",0]],
+ e:"QA catches missing signatures, uncontrolled changes, and calibration gaps before they reach patients."},
+{n:"Quality Control",s:"QC",ic:"🔬",r:2,x:1,c:"#0F5D5A",t:"tap",dir:"x",bg:"color-mix(in srgb,#0F5D5A 65%,#2BB3A7)",de:"🧫",goal:8,sp:28,
+ job:["Test raw materials and finished products","HPLC, dissolution, microbiology"],
+ p:"HPLC results roll by. Tap those OUT of spec (assay 95.0 to 105.0%).",
+ gen:function(){var v=(92+Math.random()*16).toFixed(1);return["🧫 "+v+"%",v<95||v>105]},
+ e:"QC compares every result with the specification. Out of spec triggers an investigation."},
+{n:"Production",s:"Production",ic:"🏭",r:3,x:0,c:"#2BB3A7",t:"tap",dir:"x",bg:"#0F5D5A",de:"🏭",goal:8,sp:28,
+ job:["Supervise batch production","Follow approved procedures and troubleshoot"],
+ p:"Tablets ride the line. Tap the defective ones to reject them.",
+ it:[["💊 Good tablet",0],["💊 Good tablet",0],["💥 Cracked",1],["🟤 Discolored",1],["⚪ Chipped",1]],
+ e:"Production follows the approved batch record and rejects defects."},
+{n:"Supply Chain & Warehousing",s:"Supply Chain",ic:"🚚",r:3,x:1,c:"#F6B44D",t:"temp",de:"📦",
+ job:["Manage storage conditions and inventory","Distribute under GDP"],
+ p:"Keep the cold store between 2 and 8 °C for 20 seconds. Tap Cool as heat creeps in. Do not freeze the stock!",
+ e:"Good Distribution Practice means holding the required temperature the whole way."}];
+var IMG="data:image/webp;base64,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";var S,A=document.getElementById("app"),T=null,PZ=0,hp,FL=["4","3","2","G"];
+function hud(){document.getElementById("xp").textContent=S.xp+" XP";document.getElementById("bar").style.width=Math.min(100,S.xp/9.6)+"%"}
+function hearts(){return "❤️".repeat(hp)+"🖤".repeat(3-hp)}
+function init(){S={xp:0,d:[],p:{r:3,x:"m"},w:0};hud();start()}
+function start(){A.innerHTML='<div class="card"><div class="ban" style="background:color-mix(in srgb,var(--acc) 30%,var(--panel))">🏢 <img class="pic" src="'+IMG+'" alt=""> 💊</div><h1>PharmaQuest</h1><p>You are a new pharmacist at PharmaCo. Take the elevator, walk into each of the 8 departments, and survive its real-time challenge.</p><p class="mute">3 hearts per level. More hearts left means more XP.</p><button class="go" id="b">Enter the building</button></div>';b.onclick=map}
+function px(x){return x==="m"?"50%":x===0?"calc((100% - 44px)/4)":"calc(100% - (100% - 44px)/4)"}
+function py(r){return(34+r*95+68)+"px"}
+function map(){clearInterval(T);var h='<div class="card"><h2>PharmaCo building</h2><p class="mute">Tap a room. Your pharmacist takes the elevator and walks there.</p></div><div class="bld"><div class="roof">💊 PharmaCo</div>';
+ function room(r,x){var k=L.findIndex(function(d){return d.r==r&&d.x==x}),d=L[k],dn=S.d.indexOf(k)>-1;
+  return'<button class="rm'+(dn?" dn":"")+'" data-k="'+k+'" style="background:color-mix(in srgb,'+d.c+' 38%,var(--panel))"><span class="sc">'+d.de+'</span>'+(dn?'<span class="ck">✅</span>':'')+'<b>'+d.s+'</b></button>'}
+ for(var r=0;r<4;r++)h+='<div class="fl">'+room(r,0)+'<div class="sh">'+FL[r]+'</div>'+room(r,1)+'</div>';
+ A.innerHTML=h+'<div class="av" id="av" style="left:'+px(S.p.x)+';top:'+py(S.p.r)+'"><img class="pic" src="'+IMG+'" alt="Your pharmacist"></div></div>';
+ A.querySelectorAll(".rm").forEach(function(x){x.onclick=function(){walk(+x.dataset.k)}})}
+function walk(k){if(S.w)return;S.w=1;var d=L[k],av=document.getElementById("av"),a=S.p.x==="m"?0:800,b=S.p.r==d.r?0:900;av.classList.add("walk");av.style.left=px("m");
+ setTimeout(function(){av.style.top=py(d.r)},a);setTimeout(function(){av.style.left=px(d.x)},a+b+(a+b?0:0));
+ setTimeout(function(){S.p={r:d.r,x:d.x};S.w=0;brief(k)},a+b+850)}
+function brief(i){var d=L[i];A.innerHTML='<div class="card"><div class="ban" style="background:'+d.bg+'">'+d.de+' '+d.ic+'</div><span class="tag">Floor '+FL[d.r]+'</span><h2 style="margin-top:10px">'+d.n+'</h2><p>Your job here:</p><ul>'+d.job.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul><button class="go" id="b">Start shift</button><button id="bb" style="width:100%;margin-top:10px;text-align:center">Back to the building</button></div>';b.onclick=function(){play(i)};document.getElementById("bb").onclick=map}
+function ask(){PZ=1;var o=document.createElement("div");o.className="ov";o.innerHTML='<div class="card"><h2>Leave this level?</h2><p>Your progress in this level will be lost and the department stays incomplete.</p><button class="go" id="kp">Keep playing</button><button id="lv" style="width:100%;margin-top:10px;text-align:center">Leave level</button></div>';document.body.appendChild(o);kp.onclick=function(){PZ=0;o.remove()};lv.onclick=function(){PZ=0;o.remove();map()}}
+function frame(i,inner){var d=L[i];A.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span class="tag">'+d.s+'</span><span><span id="hp">'+hearts()+'</span><button id="bb" class="xb" aria-label="Leave level">✕</button></span></div><h2 style="margin-top:10px">'+d.p+'</h2>'+inner+'<div id="f" aria-live="polite"></div></div>';document.getElementById("bb").onclick=ask}
+function hit(i){var hh=document.getElementById("hp");if(!hh||hp<=0)return;hp--;hh.textContent=hearts();var a=document.getElementById("ar");if(a){a.classList.remove("no");void a.offsetWidth;a.classList.add("no")}if(hp<=0){clearInterval(T);setTimeout(function(){lose(i)},500)}}
+function lose(i){A.innerHTML='<div class="card"><h2>Out of hearts</h2><p>Every pharmacist learns from errors. Shake it off and go again.</p><button class="go" id="b">Retry level</button><button id="bb" style="width:100%;margin-top:10px;text-align:center">Back to the building</button></div>';b.onclick=function(){play(i)};document.getElementById("bb").onclick=map}
+function win(i){if(hp<=0)return;clearInterval(T);var g=60+hp*20;S.xp+=g;if(S.d.indexOf(i)<0)S.d.push(i);hud();
+ A.innerHTML='<div class="card"><h2>Level complete! +'+g+' XP</h2><p>'+L[i].e+'</p><button class="go" id="b">'+(S.d.length==L.length?"See my results":"Back to the building")+'</button></div>';b.onclick=S.d.length==L.length?end:map}
+function play(i){hp=3;PZ=0;clearInterval(T);var d=L[i];d.t=="temp"?tp(i,d):d.t=="pour"?pour(i,d):d.t=="triage"?triage(i,d):arena(i,d)}
+function triage(i,d){var K=[["🤕","Mild headache for a few hours, gone on its own",0,"Short, mild, and resolved: log it as non-serious."],["😮‍💨","Swollen lips and throat, difficulty breathing",1,"A life-threatening allergic reaction (anaphylaxis)."],["🤢","Mild nausea after the first dose",0,"Mild and common: record it."],["🏥","Fainted and was admitted to hospital overnight",1,"Hospitalization makes a report serious."],["😴","Slight drowsiness in the afternoon",0,"Mild and manageable."],["🟡","Yellow skin and eyes with dark urine",1,"Signs of liver injury, which can be life-threatening."],["👄","Dry mouth, no other complaints",0,"A mild, common side effect."],["💔","Chest pain, taken to the emergency room by ambulance",1,"A possible life-threatening heart event."],["🩹","Itchy rash on the arm, gone in two days",0,"Mild and short-lived."],["⚡","First-ever seizure after starting treatment",1,"A seizure is a medically serious event."],["🦽","Lasting weakness in both legs after treatment",1,"Persistent disability is a seriousness criterion."],["🥱","Tiredness on the first day only",0,"Mild and temporary."]],
+ q=K.sort(function(){return Math.random()-.5}).slice(0,8),n=0,lock=0,x0=0,dx=0,dr=0;
+ frame(i,'<div class="arena" id="ar" style="background:'+d.bg+'"><span class="deco">'+d.de+'</span><div id="nm" style="padding:12px 50px 0 14px;color:#F8F8F5;font-weight:700"></div><div class="pc" id="pc"></div><span class="hint" id="hm" style="left:12px">\u25C0 Mild</span><span class="hint" id="hs" style="right:12px;color:#F6B44D">Serious \u25B6</span></div><div class="row2"><button id="bm">\u25C0 Mild: log it</button><button class="go" id="bs" style="width:auto">Serious: escalate \u25B6</button></div><p class="mute" style="margin-top:10px;font-size:14px">Serious means death, life-threatening, hospitalization, lasting disability, or a birth defect.</p>');
+ function show(){if(!document.getElementById("pc"))return;var k=q[n];pc.style.transition="none";pc.style.transform="";pc.innerHTML='<div class="em">'+k[0]+'</div><div>'+k[1]+'</div>';nm.textContent="Case "+(n+1)+" of 8";f.innerHTML="";hm.style.opacity=0;hs.style.opacity=0;void pc.offsetWidth;pc.style.transition="transform .25s";lock=0}
+ function decide(s){if(lock||PZ)return;lock=1;var k=q[n],ok=(s==k[2]);pc.style.transform="translateX("+(s?420:-420)+"px) rotate("+(s?25:-25)+"deg)";
+  f.innerHTML='<div class="fb"><b>'+(ok?"Correct. ":(k[2]?"This one is serious. ":"This one is mild. "))+'</b>'+k[3]+'</div>';if(!ok)hit(i);n++;
+  if(n==8)setTimeout(function(){if(document.getElementById("pc"))win(i)},1400);else setTimeout(show,1400)}
+ pc.onpointerdown=function(e){if(lock||PZ)return;dr=1;x0=e.clientX;pc.style.transition="none";pc.setPointerCapture(e.pointerId)};
+ pc.onpointermove=function(e){if(!dr)return;dx=e.clientX-x0;pc.style.transform="translateX("+dx+"px) rotate("+dx/12+"deg)";hs.style.opacity=Math.max(0,dx/90);hm.style.opacity=Math.max(0,-dx/90)};
+ pc.onpointerup=pc.onpointercancel=function(){if(!dr)return;dr=0;pc.style.transition="transform .25s";if(Math.abs(dx)>90)decide(dx>0?1:0);else{pc.style.transform="";hm.style.opacity=0;hs.style.opacity=0}dx=0};
+ bm.onclick=function(){decide(0)};bs.onclick=function(){decide(1)};show()}
+function signal(i,d){var n=0,tm=0,live=0,R=["liver injury","severe rash","heart palpitations","low platelets","allergic shock"],D="ABCDEF";
+ frame(i,'<div class="arena" id="ar" style="background:'+d.bg+'"><span class="deco">'+d.de+'</span><div class="big" id="nm" style="font-size:18px;padding:12px 44px 4px 8px"></div><div class="cht" id="ch"></div><div class="tbar"><i id="tb"></i></div></div><p class="mute" id="c">0 of 5</p>');
+ function rd(){if(!document.getElementById("ch"))return;f.innerHTML="";live=1;tm=8;tb.style.width="100%";var sp=Math.floor(Math.random()*6),h="";nm.textContent="Reports of "+R[n]+", this month";
+  for(var k=0;k<6;k++){var v=k==sp?17+Math.floor(Math.random()*10):2+Math.floor(Math.random()*8);h+='<button class="col" data-k="'+k+'"><span>'+v+'</span><div class="bf" style="height:'+(v/30*130)+'px"></div><span>Drug '+D[k]+'</span></button>'}
+  ch.innerHTML=h+'<div class="exp"><span>expected</span></div>';ch.dataset.sp=sp;
+  ch.querySelectorAll(".col").forEach(function(b){b.onclick=function(){if(!live||PZ)return;live=0;var k=+b.dataset.k;
+   if(k==sp){n++;c.textContent=n+" of 5";b.querySelector(".bf").style.background="#F6B44D";f.innerHTML='<div class="fb"><b>Signal found!</b> Drug '+D[k]+' is far above the expected level, so it goes to full evaluation.</div>';if(n==5)return win(i)}
+   else{f.innerHTML='<div class="fb">Not a signal. The spike was Drug '+D[sp]+'.</div>';hit(i)}
+   setTimeout(rd,1300)}})}
+ rd();
+ T=setInterval(function(){if(PZ||!live)return;tm-=0.1;tb.style.width=(tm/8*100)+"%";
+  if(tm<=0){live=0;f.innerHTML='<div class="fb">Time is up. The spike was Drug '+D[+ch.dataset.sp]+'.</div>';hit(i);setTimeout(rd,1300)}},100)}
+function pour(i,d){var n=0,lv=0,hold=0,lock=0,tg=0,N=["Active ingredient","Binder","Filler","Disintegrant","Lubricant"];
+ frame(i,'<div class="arena" id="ar" style="background:'+d.bg+'"><span class="deco">'+d.de+'</span><div class="big" id="nm" style="font-size:19px;padding:12px 40px 8px 8px"></div><div class="bkr"><div class="band" id="bd"></div><div class="liq" id="lq"></div></div><div class="big" id="rd" style="font-size:28px;padding-top:8px">0 mg</div></div><button class="go" id="po" style="touch-action:none;user-select:none">Hold to pour</button><p class="mute" id="c" style="margin-top:10px">0 of 5</p>');
+ function rs(){if(!document.getElementById("lq"))return;lv=0;lock=0;hold=0;tg=120+10*Math.floor(Math.random()*29);f.innerHTML="";lq.style.height="0";rd.textContent="0 mg";nm.textContent=N[n]+": "+tg+" mg (\u00B130)";bd.style.bottom=((tg-30)/5)+"%";bd.style.height="12%"}
+ function stop(){if(!hold)return;hold=0;if(lv<=0)return;var mg=Math.round(lv*5);lock=1;
+  if(Math.abs(mg-tg)<=30){n++;c.textContent=n+" of 5";f.innerHTML='<div class="fb"><b>Within range!</b> '+mg+' mg</div>';if(n==5)return win(i);setTimeout(rs,800)}
+  else{f.innerHTML='<div class="fb">'+(mg<tg?"Too little":"Too much")+': '+mg+' mg. The target was '+tg+' mg.</div>';hit(i);setTimeout(rs,900)}}
+ po.onpointerdown=function(e){e.preventDefault();if(!lock&&!PZ)hold=1};po.onpointerup=po.onpointerleave=po.onpointercancel=stop;po.oncontextmenu=function(e){e.preventDefault()};
+ po.onkeydown=function(e){if((e.key==" "||e.key=="Enter")&&!e.repeat){e.preventDefault();if(!lock&&!PZ)hold=1}};po.onkeyup=function(e){if(e.key==" "||e.key=="Enter")stop()};
+ rs();
+ T=setInterval(function(){if(PZ||lock)return;if(hold){lv+=1.15;if(lv>=100){lv=100;hold=0;lock=1;f.innerHTML='<div class="fb">Overflow! Too much powder spilled.</div>';hit(i);setTimeout(rs,900)}lq.style.height=lv+"%";rd.textContent=Math.round(lv*5)+" mg"}},30)}
+function arena(i,d){var C=d.t=="catch",n=0,sp=0,tk=0,its=[];
+ frame(i,'<div class="arena" id="ar" style="background:'+d.bg+'"><span class="deco">'+d.de+'</span>'+(C?'<div id="bk">'+d.bk+'</div>':d.dir=="x"?'<div class="belt"></div>':'')+'</div><p class="mute" id="c">0 of '+d.goal+'</p>');
+ var W=ar.clientWidth,H=ar.clientHeight,bx=W/2;
+ function sb(){bk.style.left=(bx-28)+"px"}
+ if(C){sb();ar.onpointermove=ar.onpointerdown=function(e){bx=Math.max(28,Math.min(W-28,e.clientX-ar.getBoundingClientRect().left));sb()}}
+ function rm(o){o.el.remove();its.splice(its.indexOf(o),1)}
+ function got(){n++;c.textContent=n+" of "+d.goal;if(n==d.goal)win(i)}
+ function spawn(){var x=d.gen?d.gen():d.it[Math.floor(Math.random()*d.it.length)],e=document.createElement(C?"div":"button");e.className="item";e.textContent=x[0];ar.appendChild(e);
+  var o={el:e,g:x[1],x:d.dir=="x"?-170:Math.random()*(W-170)+10,y:d.dir=="x"?(sp++%2?160:70):-40};its.push(o);
+  if(!C)e.onpointerdown=function(){if(its.indexOf(o)<0)return;rm(o);if(o.g)got();else hit(i)}}
+ T=setInterval(function(){if(PZ)return;tk++;if(tk%d.sp==1)spawn();
+  its.slice().forEach(function(o){if(d.dir=="x")o.x+=3;else o.y+=d.v;o.el.style.transform="translate("+o.x+"px,"+o.y+"px)";
+   var cx=o.x+o.el.offsetWidth/2;
+   if(C&&o.y>H-82&&o.y<H-30&&Math.abs(cx-bx)<(o.el.offsetWidth/4+28)){rm(o);if(o.g)got();else hit(i)}
+   else if(d.dir=="x"?o.x>W:o.y>H){rm(o);if(!C&&o.g)hit(i)}})},40)}
+function tp(i,d){var t=5,tk=0;frame(i,'<div class="arena" id="ar" style="background:#0F5D5A;height:auto;padding:14px"><span class="deco">📦❄️</span><div class="thermo"><div class="zone"></div><div class="mer" id="m"></div></div><div class="big" id="t"></div><p style="text-align:center;color:#F8F8F5" id="tm">20 s left</p><button class="go" id="cl">❄️ Cool</button></div>');
+ function draw(){m.style.height=Math.max(0,Math.min(100,(t+5)/20*100))+"%";document.getElementById("t").textContent=t.toFixed(1)+" °C"}
+ cl.onclick=function(){t-=1.1;draw()};draw();
+ T=setInterval(function(){if(PZ)return;tk++;t+=0.1+Math.random()*0.25+(Math.random()<.06?0.8:0);draw();tm.textContent=Math.max(0,20-Math.floor(tk/4))+" s left";
+  if(t>8||t<2){f.innerHTML='<div class="fb">'+(t>8?"Too warm! Product at risk.":"Too cold! The stock froze.")+'</div>';t=5;hit(i)}
+  else if(tk>=80)win(i)},250)}
+function end(){var r=S.xp>=900?["🏆","Qualified Person"]:S.xp>=750?["🥈","Senior Pharmacist"]:["🥉","Trainee Pharmacist"];
+ A.innerHTML='<div class="card"><div style="font-size:56px;text-align:center">'+r[0]+'</div><h1 style="text-align:center">'+r[1]+'</h1><p style="text-align:center">'+S.xp+' XP</p><p>The industry pharmacist ensures medicines are <b>safe, effective, and consistent</b>, applies GMP, GLP, and GDP, keeps documentation, investigates deviations, complaints, and recalls, works across teams, and drives audits and improvement.</p><button class="go" id="b">Play again</button></div>';b.onclick=init}
+init();
+</script></body></html>
